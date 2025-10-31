@@ -1,6 +1,5 @@
 ﻿using SREmulator.SRItems;
 using SREmulator.SRWarps;
-using System.Collections.ObjectModel;
 
 namespace SREmulator.CLI
 {
