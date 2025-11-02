@@ -91,7 +91,7 @@ namespace SREmulator.CLI
 
             if (args.Warps.Count is 0) return;
             var warp = args.Warps[0];
-            var player = args.Player;
+            var player = args.CreatePlayer();
             StringBuilder builder = args.Export ? new StringBuilder() : null!;
             if (args.Export) builder.AppendLine("对象类型,对象名称,对象星级,跃迁类型");
 
@@ -173,7 +173,7 @@ namespace SREmulator.CLI
 
             Parallel.For(0, total, _ =>
             {
-                SRPlayer player = args.Player;
+                var player = args.CreatePlayer();
                 player.WarpCurrencyStats.NoWarpRewards = true;
                 player.WarpCurrencyStats.UnlimitedResources = true;
                 var target = args.Targets.Create();
@@ -217,7 +217,7 @@ namespace SREmulator.CLI
 
             Parallel.For(0, total, _ =>
             {
-                SRPlayer player = args.Player;
+                var player = args.CreatePlayer();
                 var target = args.Targets.Create();
 
                 foreach (var warp in args.Warps)
@@ -252,7 +252,7 @@ namespace SREmulator.CLI
 
             Parallel.For(0, total, _ =>
             {
-                SRPlayer player = args.Player;
+                var player = args.CreatePlayer();
                 var target = args.Targets.Create();
 
                 foreach (var warp in args.Warps)

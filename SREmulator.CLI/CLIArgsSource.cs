@@ -33,7 +33,7 @@ namespace SREmulator.CLI
             if (!int.TryParse(s, out int value))
             {
                 value = Math.Clamp(default, minValue, maxValue);
-                Warning($"参数错误 '{s}' （参数应为整数）（已自动设置为 '{value}'）");
+                Warning($"参数错误 '{s}' （参数无法解析为整数或超出范围）（已自动设置为 '{value}'）");
             }
             int ret = Math.Clamp(value, minValue, maxValue);
             if (ret != value) Warning($"参数错误 '{s}'（参数范围为 [{minValue}, {maxValue}]）（已自动设置为 '{ret}'）");

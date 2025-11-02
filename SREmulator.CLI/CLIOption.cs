@@ -51,9 +51,11 @@ namespace SREmulator.CLI
             }
         }
 
-        public static bool TryApplyOption(string name, CLIArgs args, CLIArgsSource source)
+        public static (bool Applied, string? Message) TryApplyOption(string name, CLIArgs args, CLIArgsSource source)
         {
-            if (!Options.TryGetValue(name, out CLIOption? option)) return false;
+            if (!Options.TryGetValue(name, out CLIOption? option))
+                return (false, $"无法识别的选项 --'{name}'");
+
             return option.TryApplyToCLIArgs(args, source);
         }
     }
@@ -62,17 +64,17 @@ namespace SREmulator.CLI
     {
         public abstract string Name { get; }
 
-        public abstract bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source);
+        public abstract (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source);
     }
 
     public sealed class PauseOption : CLIOption
     {
         public override string Name => "pause";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Pause = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -80,10 +82,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "silent";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Silent = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -91,10 +93,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "return";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Return = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -102,10 +104,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "export";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Export = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -113,10 +115,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "output";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Output = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -124,10 +126,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "star-rail-pass";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.StarRailPass = source.NextInt32(0);
-            return true;
+            args.WarpCurrencyStats.StarRailPass = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -135,10 +137,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "star-rail-special-pass";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.StarRailSpecialPass = source.NextInt32(0);
-            return true;
+            args.WarpCurrencyStats.StarRailSpecialPass = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -146,10 +148,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "undying-starlight";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.UndyingStarlight = source.NextInt32(0);
-            return true;
+            args.WarpCurrencyStats.UndyingStarlight = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -157,10 +159,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "stellar-jade";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.StellarJade = source.NextInt32(0);
-            return true;
+            args.WarpCurrencyStats.StellarJade = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -168,10 +170,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "oneiric-shard";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.OneiricShard = source.NextInt32(0);
-            return true;
+            args.WarpCurrencyStats.OneiricShard = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -179,13 +181,14 @@ namespace SREmulator.CLI
     {
         public override string Name => "eidolon";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             var character = source.NextWarpResultItem<SRCharacter>();
-            if (character is null) return false;
+            if (character is null)
+                return (false, null);
             int count = source.NextInt32(-1, 6);
             args.Eidolons[character] = count;
-            return true;
+            return (true, null);
         }
     }
 
@@ -193,10 +196,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "unlimited-resources";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.UnlimitedResources = true;
-            return true;
+            args.WarpCurrencyStats.UnlimitedResources = true;
+            return (true, null);
         }
     }
 
@@ -205,10 +208,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter5";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter5 = source.NextInt32(0, 89);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter5 = source.NextInt32(0, 89);
+            return (true, null);
         }
     }
 
@@ -216,10 +222,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "guarantee5";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Guarantee5 = true;
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Guarantee5 = true;
+            return (true, null);
         }
     }
 
@@ -227,10 +236,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter5character";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter5Character = source.NextInt32(0);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter5Character = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -238,10 +250,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter5lightcone";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter5LightCone = source.NextInt32(0);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter5LightCone = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -249,10 +264,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter4";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter4 = source.NextInt32(0);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter4 = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -260,10 +278,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "guarantee4";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Guarantee4 = true;
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Guarantee4 = true;
+            return (true, null);
         }
     }
 
@@ -271,10 +292,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter4character";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter4Character = source.NextInt32(0);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter4Character = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -282,10 +306,13 @@ namespace SREmulator.CLI
     {
         public override string Name => "counter4lightcone";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.Counter4LightCone = source.NextInt32(0);
-            return true;
+            if (args.CurrentWarpStats is null)
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
+
+            args.CurrentWarpStats.Counter4LightCone = source.NextInt32(0);
+            return (true, null);
         }
     }
 
@@ -293,10 +320,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "warp-name";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.WarpName = source.Next();
-            return true;
+            args.WarpArgs.WarpName = source.Next();
+            return (true, null);
         }
     }
 
@@ -304,11 +331,12 @@ namespace SREmulator.CLI
     {
         public override string Name => "warp-version";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.WarpVersionMajor = source.NextInt32(1, 3);
-            args.WarpVersionMinor = source.NextInt32(0, 7);
-            return true;
+            var major = source.NextInt32(1, 3);
+            var minor = source.NextInt32(0, 7);
+            args.WarpArgs.WarpVersion = SRVersions.CreateAvailable(major, minor);
+            return (true, null);
         }
     }
 
@@ -316,13 +344,14 @@ namespace SREmulator.CLI
     {
         public override string Name => "target";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             var item = source.NextWarpResultItem();
-            if (item is null) return false;
+            if (item is null)
+                return (false, null);
             int count = source.NextInt32(0);
             args.Targets.AppendTarget(item, count);
-            return true;
+            return (true, null);
         }
     }
 
@@ -330,10 +359,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "attempts";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Attempts = source.NextInt32(1);
-            return true;
+            return (true, null);
         }
     }
 
@@ -341,10 +370,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "days";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Days = source.NextInt32(0);
-            return true;
+            return (true, null);
         }
     }
 
@@ -352,10 +381,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "express-supply-pass";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.ExpressSupplyPass = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -363,10 +392,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "help";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Help = true;
-            return true;
+            return (true, null);
         }
     }
 
@@ -374,10 +403,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "language";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.Language = source.Next();
-            return true;
+            return (true, null);
         }
     }
 
@@ -385,10 +414,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "no-rewards";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.NoRewards = true;
-            return true;
+            args.WarpCurrencyStats.NoWarpRewards = true;
+            return (true, null);
         }
     }
 
@@ -396,11 +425,14 @@ namespace SREmulator.CLI
     {
         public override string Name => "new-warp";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.TryAddAndResetWarp();
-            args.WarpTypeName = source.Next();
-            return args.WarpType is not SRWarpType.None;
+            var name = source.Next();
+            args.WarpArgs.WarpType = SRWarpTypes.FromeName(name);
+            if (args.WarpArgs.WarpType is SRWarpType.None)
+                return (false, $"无法识别的卡池类型 '{name}'");
+            return (true, null);
         }
     }
 
@@ -408,36 +440,44 @@ namespace SREmulator.CLI
     {
         public override string Name => "custom-warp";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
-            args.WarpName = "__custom";
-            if (args.WarpType is SRWarpType.CharacterEventWarp)
+            args.WarpArgs.WarpName = CLIArgs.CLIWarpArgs.CustomWarpName;
+            if (args.WarpArgs.WarpType is SRWarpType.CharacterEventWarp)
             {
-                args.Up5 = source.NextWarpResultItem<SRStar5Character>();
-                if (args.Up5 is null) return false;
-                args.Up41 = source.NextWarpResultItem<SRStar4Character>();
-                if (args.Up41 is null) return false;
-                args.Up42 = source.NextWarpResultItem<SRStar4Character>();
-                if (args.Up42 is null) return false;
-                args.Up43 = source.NextWarpResultItem<SRStar4Character>();
-                if (args.Up43 is null) return false;
+                args.WarpArgs.Up5 = source.NextWarpResultItem<SRStar5Character>();
+                if (args.WarpArgs.Up5 is null)
+                    return (false, null);
+                args.WarpArgs.Up41 = source.NextWarpResultItem<SRStar4Character>();
+                if (args.WarpArgs.Up41 is null)
+                    return (false, null);
+                args.WarpArgs.Up42 = source.NextWarpResultItem<SRStar4Character>();
+                if (args.WarpArgs.Up42 is null)
+                    return (false, null);
+                args.WarpArgs.Up43 = source.NextWarpResultItem<SRStar4Character>();
+                if (args.WarpArgs.Up43 is null)
+                    return (false, null);
             }
-            else if (args.WarpType is SRWarpType.LightConeEventWarp)
+            else if (args.WarpArgs.WarpType is SRWarpType.LightConeEventWarp)
             {
-                args.Up5 = source.NextWarpResultItem<SRStar5LightCone>();
-                if (args.Up5 is null) return false;
-                args.Up41 = source.NextWarpResultItem<SRStar4LightCone>();
-                if (args.Up41 is null) return false;
-                args.Up42 = source.NextWarpResultItem<SRStar4LightCone>();
-                if (args.Up42 is null) return false;
-                args.Up43 = source.NextWarpResultItem<SRStar4LightCone>();
-                if (args.Up43 is null) return false;
+                args.WarpArgs.Up5 = source.NextWarpResultItem<SRStar5LightCone>();
+                if (args.WarpArgs.Up5 is null)
+                    return (false, null);
+                args.WarpArgs.Up41 = source.NextWarpResultItem<SRStar4LightCone>();
+                if (args.WarpArgs.Up41 is null)
+                    return (false, null);
+                args.WarpArgs.Up42 = source.NextWarpResultItem<SRStar4LightCone>();
+                if (args.WarpArgs.Up42 is null)
+                    return (false, null);
+                args.WarpArgs.Up43 = source.NextWarpResultItem<SRStar4LightCone>();
+                if (args.WarpArgs.Up43 is null)
+                    return (false, null);
             }
             else
             {
-                return false;
+                return (false, "未指定卡池类型，需先使用 '--new-warp' 指定卡池类型");
             }
-            return !args.Up41.Equals(args.Up42) && !args.Up41.Equals(args.Up43) && !args.Up42.Equals(args.Up43);
+            return (true, null);
         }
     }
 
@@ -445,10 +485,10 @@ namespace SREmulator.CLI
     {
         public override string Name => "equilibrium-level";
 
-        public override bool TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
+        public override (bool Applied, string? Message) TryApplyToCLIArgs(CLIArgs args, CLIArgsSource source)
         {
             args.EquilibriumLevel = source.NextInt32(0, 6);
-            return true;
+            return (true, null);
         }
     }
 }
