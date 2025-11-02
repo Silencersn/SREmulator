@@ -58,6 +58,11 @@ public class CLIArgs
         }
     }
 
+    private CLIArgs()
+    {
+        Targets = new(this);
+    }
+
     public bool Pause = false;
     public bool Silent = false;
     public bool Return = false;
@@ -66,8 +71,7 @@ public class CLIArgs
 
     public Dictionary<SRCharacter, int> Eidolons = [];
 
-    private CLIWarpTargetFactory? _targets = null;
-    public CLIWarpTargetFactory Targets => _targets ??= new(this);
+    public CLIWarpTargetFactory Targets { get; }
     public int Attempts = 10000;
 
     public int Days = 0;
@@ -109,12 +113,13 @@ public class CLIArgs
     }
     private SRPlayer? _player = null;
     internal CLIWarpArgs WarpArgs { get; private set; } = new();
-    internal List<SRWarp> Warps = [];
+    private readonly List<SRWarp> _warps = [];
+    internal IReadOnlyList<SRWarp> Warps => _warps;
 
     internal void TryAddAndResetWarp()
     {
         if (WarpArgs.WarpType is not SRWarpType.None)
-            Warps.Add(WarpArgs.CreateWarp());
+            _warps.Add(WarpArgs.CreateWarp());
         WarpArgs = new();
     }
 
