@@ -1,12 +1,9 @@
 ﻿[*.cs]
 
-<<<<<<< HEAD
-# CS8602: 解引用可能出现空引用。
-dotnet_diagnostic.CS8602.severity = silent
-=======
 # IDE0290: 使用主构造函数
 dotnet_diagnostic.IDE0290.severity = silent
 
 # CA1069: 不应复制枚举值
 dotnet_diagnostic.CA1069.severity = silent
->>>>>>> c2c403bd3581f46716332845dceefa430401e2a0
+
+csharp_style_namespace_declarations = file_scoped

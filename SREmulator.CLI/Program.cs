@@ -1,7 +1,7 @@
 ﻿using System.Text;
 
-namespace SREmulator.CLI
-{
+namespace SREmulator.CLI;
+
     internal class Program
     {
         static void Main(string[] args)
@@ -26,4 +26,3 @@ namespace SREmulator.CLI
             //Console.ReadKey(true);
         }
     }
-}
