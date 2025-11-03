@@ -1,35 +1,40 @@
-﻿namespace SREmulator;
+﻿using System.Collections.Immutable;
 
-// +------------------------+------------------------+---+---+---------------------------------------+---+
-// | 1  1  1  1  1  1  1  1 | 1  1  1  1  1  1  1  1 | 1 | 1 | 0  0  0  0  0  0  0  0  0  0  0  0  0 | 1 |
-// +------------------------+------------------------+---+---+---------------------------------------+---+
-//           Major                    Minor        Phase2 Phase1             Reserved              Specified
+namespace SREmulator;
+
+// +------------------------+------------------------+---+---+------------------------------------+---+---+
+// | 1  1  1  1  1  1  1  1 | 1  1  1  1  1  1  1  1 | 1 | 1 | 0  0  0  0  0  0  0  0  0  0  0  0 | 1 | 1 |
+// +------------------------+------------------------+---+---+------------------------------------+---+---+
+//           Major                    Minor        Phase1 Phase2             Reserved            Minor Major
+//                                                                                                Specified
 [Flags]
 public enum SRVersion : uint
 {
     Unspecified = 0x00_00_00_00,
-    Specified = 0x00_00_00_01,
+    MajorSpecified = 0x00_00_00_01,
+    MinorSpecified = 0x00_00_00_02,
+    VersionSpecified = MajorSpecified | MinorSpecified,
 
     MajorMask = 0xFF_00_00_00,
     MinorMask = 0x00_FF_00_00,
-    SpecifiedVersionMask = MajorMask | MinorMask | Specified,
+    SpecifiedVersionMask = MajorMask | MinorMask | VersionSpecified,
 
-    Major1 = 0x01_00_00_00 | Specified,
-    Major2 = 0x02_00_00_00 | Specified,
-    Major3 = 0x03_00_00_00 | Specified,
+    Major1 = 0x01_00_00_00 | MajorSpecified,
+    Major2 = 0x02_00_00_00 | MajorSpecified,
+    Major3 = 0x03_00_00_00 | MajorSpecified,
 
-    Minor0 = 0x00_00_00_00 | Specified,
-    Minor1 = 0x00_01_00_00 | Specified,
-    Minor2 = 0x00_02_00_00 | Specified,
-    Minor3 = 0x00_03_00_00 | Specified,
-    Minor4 = 0x00_04_00_00 | Specified,
-    Minor5 = 0x00_05_00_00 | Specified,
-    Minor6 = 0x00_06_00_00 | Specified,
-    Minor7 = 0x00_07_00_00 | Specified,
-    Minor8 = 0x00_08_00_00 | Specified,
+    Minor0 = 0x00_00_00_00 | MinorSpecified,
+    Minor1 = 0x00_01_00_00 | MinorSpecified,
+    Minor2 = 0x00_02_00_00 | MinorSpecified,
+    Minor3 = 0x00_03_00_00 | MinorSpecified,
+    Minor4 = 0x00_04_00_00 | MinorSpecified,
+    Minor5 = 0x00_05_00_00 | MinorSpecified,
+    Minor6 = 0x00_06_00_00 | MinorSpecified,
+    Minor7 = 0x00_07_00_00 | MinorSpecified,
+    Minor8 = 0x00_08_00_00 | MinorSpecified,
 
-    Phase1 = 0x00_00_01_00 | Specified,
-    Phase2 = 0x00_00_02_00 | Specified,
+    Phase1 = 0x00_00_80_00,
+    Phase2 = 0x00_00_40_00,
 
     Ver1p0 = Major1 | Minor0,
     Ver1p1 = Major1 | Minor1,
@@ -56,15 +61,25 @@ public enum SRVersion : uint
     Ver3p5 = Major3 | Minor5,
     Ver3p6 = Major3 | Minor6,
     Ver3p7 = Major3 | Minor7,
+    Ver3p8 = Major3 | Minor8,
 }
 
 public static class SRVersions
 {
+    public static int MaxAvailableMajor => 3;
+
+    public static ImmutableArray<SRVersion> AvailableVersions { get; } =
+        [.. Enumerable
+            .Range(1, MaxAvailableMajor)
+            .Select(major => (Major: major, Minor: GetMaxAvailableMinor(major)))
+            .SelectMany(version => Enumerable.Range(0, version.Minor + 1).Select(minor => (version.Major, Minor: minor)))
+            .Select(version => InternalCreate((byte)version.Major, (byte)version.Minor))];
+
     private static SRVersion InternalCreate(byte major, byte minor)
     {
         var majorEnum = (SRVersion)((uint)major << 8 * 3);
         var minorEnum = (SRVersion)((uint)minor << 8 * 2);
-        return majorEnum | minorEnum | SRVersion.Specified;
+        return majorEnum | minorEnum | SRVersion.VersionSpecified;
     }
 
     private static int GetMaxAvailableMinor(int major)
@@ -85,7 +100,7 @@ public static class SRVersions
     }
     public static SRVersion CreateAvailable(int major, int minor)
     {
-        major = Math.Clamp(major, 1, 3);
+        major = Math.Clamp(major, 1, MaxAvailableMajor);
         minor = Math.Clamp(minor, 0, GetMaxAvailableMinor(major));
         return InternalCreate((byte)major, (byte)minor);
     }
