@@ -58,7 +58,9 @@ namespace SREmulator.GUI.Model
                 if (latestVersion is null)
                     return;
 
-                var currentVersion = Application.ResourceAssembly.GetName().Version.ToString();
+                var currentVersion = Application.ResourceAssembly.GetName().Version?.ToString();
+                if (currentVersion is null)
+                    return;
 
                 if (Version.Parse(latestVersion.TrimStart('v')) > Version.Parse(currentVersion))
                 {

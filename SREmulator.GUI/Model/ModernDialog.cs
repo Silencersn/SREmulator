@@ -21,7 +21,8 @@ namespace SREmulator.GUI.Model
             {
                 Markdown = message
             };
-            markdownViewer.Document.FontFamily = new FontFamily("Microsoft YaHei UI");
+            if (markdownViewer.Document is not null)
+                markdownViewer.Document.FontFamily = new FontFamily("Microsoft YaHei UI");
             var dialog = new ContentDialog
             {
                 Title = title,

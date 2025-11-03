@@ -32,7 +32,7 @@ namespace SREmulator.GUI.View
         private void About_Loaded(object sender, RoutedEventArgs e)
         {
             // 获取应用程序版本号   
-            txtVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            txtVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
