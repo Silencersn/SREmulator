@@ -7,6 +7,10 @@ public static partial class SRCharacterEventWarps
 {
     public static partial SRCharacterEventWarp? GetWarpByNameAndVersion(string? name, SRVersion version);
 
+    public static partial IReadOnlyList<SRCharacterEventWarp>? GetWarpsByName(string? name);
+
+    public static partial IReadOnlyList<SRCharacterEventWarp>? GetWarpsByVersion(SRVersion version);
+
     public static SRCharacterEventWarp Create(SRStar5Character up5, SRStar4Character up41, SRStar4Character up42, SRStar4Character up43, SRVersion version = SRVersion.Ver2p7)
     {
         return new SRCustomCharacterEventWarp(up5, up41, up42, up43, version);

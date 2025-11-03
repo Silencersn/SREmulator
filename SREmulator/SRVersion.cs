@@ -1,34 +1,35 @@
 ﻿namespace SREmulator;
 
-// +------------+------------+---------------------+---+
-// | 1  1  1  1 | 1  1  1  1 | 0  0  0  0  0  0  0 | 1 |
-// +------------+------------+---------------------+---+
-//     Major        Minor           Reserved      Specified
+// +------------------------+------------------------+---+---+---------------------------------------+---+
+// | 1  1  1  1  1  1  1  1 | 1  1  1  1  1  1  1  1 | 1 | 1 | 0  0  0  0  0  0  0  0  0  0  0  0  0 | 1 |
+// +------------------------+------------------------+---+---+---------------------------------------+---+
+//           Major                    Minor        Phase2 Phase1             Reserved              Specified
 [Flags]
-public enum SRVersion : ushort
+public enum SRVersion : uint
 {
-    Unspecified = 0x0000,
-    Specified = 0x0001,
+    Unspecified = 0x00_00_00_00,
+    Specified = 0x00_00_00_01,
 
-    MajorMask = 0xF000,
-    MinorMask = 0x0F00,
-    VersionForWarps = MajorMask | MinorMask | Specified,
+    MajorMask = 0xFF_00_00_00,
+    MinorMask = 0x00_FF_00_00,
+    SpecifiedVersionMask = MajorMask | MinorMask | Specified,
 
-    Major1 = 0x1000 | Specified,
-    Major2 = 0x2000 | Specified,
-    Major3 = 0x3000 | Specified,
+    Major1 = 0x01_00_00_00 | Specified,
+    Major2 = 0x02_00_00_00 | Specified,
+    Major3 = 0x03_00_00_00 | Specified,
 
-    Minor0 = 0x0000 | Specified,
-    Minor1 = 0x0100 | Specified,
-    Minor2 = 0x0200 | Specified,
-    Minor3 = 0x0300 | Specified,
-    Minor4 = 0x0400 | Specified,
-    Minor5 = 0x0500 | Specified,
-    Minor6 = 0x0600 | Specified,
-    Minor7 = 0x0700 | Specified,
+    Minor0 = 0x00_00_00_00 | Specified,
+    Minor1 = 0x00_01_00_00 | Specified,
+    Minor2 = 0x00_02_00_00 | Specified,
+    Minor3 = 0x00_03_00_00 | Specified,
+    Minor4 = 0x00_04_00_00 | Specified,
+    Minor5 = 0x00_05_00_00 | Specified,
+    Minor6 = 0x00_06_00_00 | Specified,
+    Minor7 = 0x00_07_00_00 | Specified,
+    Minor8 = 0x00_08_00_00 | Specified,
 
-    Phase1 = 0x0010 | Specified,
-    Phase2 = 0x0020 | Specified,
+    Phase1 = 0x00_00_01_00 | Specified,
+    Phase2 = 0x00_00_02_00 | Specified,
 
     Ver1p0 = Major1 | Minor0,
     Ver1p1 = Major1 | Minor1,
@@ -59,23 +60,33 @@ public enum SRVersion : ushort
 
 public static class SRVersions
 {
-    internal static SRVersion InternalCreate(int major, int minor)
+    private static SRVersion InternalCreate(byte major, byte minor)
     {
-        SRVersion majorEnum = (SRVersion)(major << 12);
-        SRVersion minorEnum = (SRVersion)(minor << 8);
+        var majorEnum = (SRVersion)((uint)major << 8 * 3);
+        var minorEnum = (SRVersion)((uint)minor << 8 * 2);
         return majorEnum | minorEnum | SRVersion.Specified;
+    }
+
+    private static int GetMaxAvailableMinor(int major)
+    {
+        return major switch
+        {
+            1 => 6,
+            2 => 7,
+            3 => 8,
+
+            _ => 0
+        };
     }
 
     public static SRVersion Create(int major, int minor)
     {
-        major &= 0xF;
-        minor &= 0xF;
-        return InternalCreate(major, minor);
+        return InternalCreate((byte)major, (byte)minor);
     }
     public static SRVersion CreateAvailable(int major, int minor)
     {
         major = Math.Clamp(major, 1, 3);
-        minor = Math.Clamp(minor, 0, 7);
-        return InternalCreate(major, minor);
+        minor = Math.Clamp(minor, 0, GetMaxAvailableMinor(major));
+        return InternalCreate((byte)major, (byte)minor);
     }
 }

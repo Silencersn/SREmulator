@@ -7,6 +7,10 @@ public static partial class SRLightConeEventWarps
 {
     public static partial SRLightConeEventWarp? GetWarpByNameAndVersion(string? name, SRVersion version);
 
+    public static partial IReadOnlyList<SRLightConeEventWarp>? GetWarpsByName(string? name);
+
+    public static partial IReadOnlyList<SRLightConeEventWarp>? GetWarpsByVersion(SRVersion version);
+
     public static SRLightConeEventWarp Create(SRStar5LightCone up5, SRStar4LightCone up41, SRStar4LightCone up42, SRStar4LightCone up43, SRVersion version = SRVersion.Ver2p7)
     {
         return new SRCustomLightConeEventWarp(up5, up41, up42, up43, version);

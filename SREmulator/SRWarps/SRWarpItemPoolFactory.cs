@@ -6,7 +6,7 @@ public static class SRWarpItemPoolFactory
 {
     internal static int VersionToCelestialInvitationCharacterCount(SRVersion version)
     {
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 or
             SRVersion.Ver1p1 or
@@ -56,7 +56,7 @@ public static class SRWarpItemPoolFactory
 
     internal static int VersionToStar5CharacterCount(SRVersion version)
     {
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 or
             SRVersion.Ver1p1 or
@@ -106,7 +106,7 @@ public static class SRWarpItemPoolFactory
         ];
     internal static int VersionToStar5LightConeCount(SRVersion version)
     {
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 or
             SRVersion.Ver1p1 or
@@ -140,7 +140,7 @@ public static class SRWarpItemPoolFactory
         // 在后一个版本开始才会加入池中
         // 例：雪衣在1.6上半Up，在下半抽不到，在2.0及以后才可被歪出来
         // 光锥同理
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 => 13,
             SRVersion.Ver1p1 => 13,
@@ -213,7 +213,7 @@ public static class SRWarpItemPoolFactory
 
     internal static int VersionToStar4LightConeCount(SRVersion version)
     {
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 or
             SRVersion.Ver1p1 or
@@ -319,7 +319,7 @@ public static class SRWarpItemPoolFactory
         ];
     internal static int VersionToStar3LightConeCount(SRVersion version)
     {
-        return (version & SRVersion.VersionForWarps) switch
+        return (version & SRVersion.SpecifiedVersionMask) switch
         {
             SRVersion.Ver1p0 or
             SRVersion.Ver1p1 or
